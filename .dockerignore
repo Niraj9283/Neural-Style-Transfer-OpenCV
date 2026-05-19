@@ -1,0 +1,15 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.git/
+.idea/
+.vscode/
+.streamlit_pid
+Neural-Style-Transfer-OpenCV.zip
+uploads/*
+!uploads/.gitkeep
+outputs/*
+!outputs/.gitkeep
+!outputs/campus_candy.jpg
+!outputs/campus_candy_comparison.jpg

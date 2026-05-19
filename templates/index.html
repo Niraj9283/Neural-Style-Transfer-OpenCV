@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Neural Style Transfer with OpenCV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">OpenCV DNN Project</p>
+          <h1>Neural Style Transfer</h1>
+        </div>
+        <a class="health" href="/health">Docker Ready</a>
+      </header>
+
+      {% if error %}
+        <section class="notice">{{ error }}</section>
+      {% endif %}
+
+      <section class="workspace">
+        <form class="controls" action="/" method="post" enctype="multipart/form-data">
+          <label>
+            Style model
+            <select name="model">
+              {% for model in models %}
+                <option value="{{ model.name }}" {% if selected_model and model.name == selected_model.name %}selected{% endif %}>
+                  {{ display_name(model) }}
+                </option>
+              {% endfor %}
+            </select>
+          </label>
+
+          <label>
+            Sample image
+            <select name="sample">
+              {% for sample in samples %}
+                <option value="{{ sample.name }}" {% if selected_sample and sample.name == selected_sample.name %}selected{% endif %}>
+                  {{ display_name(sample) }}
+                </option>
+              {% endfor %}
+            </select>
+          </label>
+
+          <label>
+            Upload image
+            <input type="file" name="image" accept=".jpg,.jpeg,.png,.bmp,.webp">
+          </label>
+
+          <label>
+            Output width
+            <input type="range" name="width" min="320" max="1200" step="20" value="{{ width }}">
+            <span>{{ width }} px</span>
+          </label>
+
+          <label>
+            Style strength
+            <input type="range" name="strength" min="0.2" max="1.0" step="0.05" value="{{ strength }}">
+            <span>{{ "%.2f"|format(strength) }}</span>
+          </label>
+
+          <button type="submit">Stylize Image</button>
+        </form>
+
+        <section class="preview-grid">
+          <article class="panel">
+            <div class="panel-title">Content</div>
+            {% if content_url %}
+              <img src="{{ content_url }}" alt="Selected content image">
+            {% else %}
+              <div class="empty">No content image</div>
+            {% endif %}
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">Stylized Output</div>
+            {% if result_url %}
+              <img src="{{ result_url }}" alt="Stylized output image">
+              <a class="download" href="{{ result_url }}" download>Download result</a>
+            {% else %}
+              <div class="empty">Run style transfer</div>
+            {% endif %}
+          </article>
+        </section>
+      </section>
+
+      {% if metrics %}
+        <section class="metrics">
+          <span>Model: {{ metrics.model }}</span>
+          <span>Inference: {{ metrics.time }}</span>
+          <span>Output: {{ metrics.size }}</span>
+        </section>
+      {% endif %}
+    </main>
+  </body>
+</html>
