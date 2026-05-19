@@ -19,6 +19,31 @@ from nst_opencv import StyleTransferEngine, list_style_models, load_image, save_
 
 
 MODELS_DIR = ROOT / "models"
+
+
+def ensure_models_downloaded() -> None:
+    """Ensure at least one .t7 model exists so the UI can populate styles."""
+    # If models are already present, do nothing.
+    if list_style_models(MODELS_DIR):
+        return
+
+    # Avoid network issues on some hosts by defaulting to a single small model.
+    # Users can change this behavior by editing scripts/download_models.py.
+    try:
+        import subprocess
+
+        subprocess.check_call(
+            [
+                sys.executable,
+                "scripts/download_models.py",
+                "--model",
+                "candy",
+            ],
+            cwd=str(ROOT),
+        )
+    except Exception:
+        # Swallow errors so the server still starts and shows a clear UI error.
+        pass
 SAMPLES_DIR = ROOT / "assets" / "sample_content"
 OUTPUTS_DIR = ROOT / "outputs"
 UPLOADS_DIR = ROOT / "uploads"
@@ -171,4 +196,5 @@ def health():
 
 
 if __name__ == "__main__":
+    ensure_models_downloaded()
     app.run(host="0.0.0.0", port=5000, debug=False)
